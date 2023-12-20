@@ -1,0 +1,75 @@
+
+#include <Servo.h>
+
+Servo servomotor;
+
+int trig = 9;
+int echo = 8;
+int temp;
+int distance;
+
+char data;
+
+boolean autoMode = true; // Modo automático por defecto
+
+void setup() {
+ Serial.begin(9600);
+ pinMode(trig, OUTPUT);
+ pinMode(echo, INPUT);
+ servomotor.attach(2);
+}
+
+void loop() {
+ if (Serial.available()) {
+    data = Serial.read();
+    Serial.println(data);
+
+    if (data == 'm') {
+      autoMode = true;
+    }
+    if (data == 'a') {
+      autoMode = false;
+      distance = 0;
+      servomotor.write(120);
+    }
+    if (data == 'b') {
+      autoMode = false;
+      distance = 0;
+      servomotor.write(0);
+    }
+ }
+
+ if (autoMode == true) {
+   digitalWrite(trig, HIGH);
+   delayMicroseconds(10);
+   digitalWrite(trig, LOW);
+   temp = pulseIn(echo, HIGH);
+   distance = temp / 58.2;
+
+   if (distance > 20 && distance < 30) {
+      servomotor.write(120);
+      delay(3000);
+   } else {
+      servomotor.write(0);
+      delay(3000);
+   }
+ }
+ digitalWrite(trig, HIGH);
+ delay(500);
+ digitalWrite(trig, LOW);
+ temp = pulseIn(echo,HIGH);
+ distance = temp/58.2;
+ delay(500);
+ if(distance <=40){
+   servomotor.write(120);
+   delay (3000);
+ }
+ if (distance> 40 ){
+   servomotor.write(0);
+ }
+ 
+ 
+
+ 
+ 
+}

@@ -1,0 +1,134 @@
+
+classdef app1 < matlab.apps.AppBase
+
+    % Properties that correspond to app components
+    properties (Access = public)
+        UIFigure                 matlab.ui.Figure
+        BASUREROAUTOMATICOLabel  matlab.ui.control.Label
+        conectarButton           matlab.ui.control.Button
+        desconectarButton        matlab.ui.control.Button
+        cerrarButton             matlab.ui.control.Button
+        abrirButton              matlab.ui.control.Button
+    end
+
+    
+    properties (Access = public)
+        conectar; % Description
+    end
+    
+    
+
+    % Callbacks that handle component events
+    methods (Access = private)
+
+        % Code that executes after component creation
+        function startupFcn(app)
+            app.conectar = serial('COM3', 'BaudRate', 9600);
+        end
+
+        % Button pushed function: conectarButton
+        function conectarButtonPushed(app, event)
+            fopen(app.conectar);
+        end
+
+        % Button pushed function: abrirButton
+        function abrirButtonPushed(app, event)
+            fprintf(app.conectar, 'a');
+        end
+
+        % Button pushed function: cerrarButton
+        function cerrarButtonPushed(app, event)
+            fprintf(app.conectar, 'b');
+        end
+
+        % Button pushed function: desconectarButton
+        function desconectarButtonPushed(app, event)
+            fclose(app.conectar);
+            delete(app.conectar);
+        end
+    end
+
+    % Component initialization
+    methods (Access = private)
+
+        % Create UIFigure and components
+        function createComponents(app)
+
+            % Create UIFigure and hide until all components are created
+            app.UIFigure = uifigure('Visible', 'off');
+            app.UIFigure.Position = [100 100 629 375];
+            app.UIFigure.Name = 'MATLAB App';
+
+            % Create abrirButton
+            app.abrirButton = uibutton(app.UIFigure, 'push');
+            app.abrirButton.ButtonPushedFcn = createCallbackFcn(app, @abrirButtonPushed, true);
+            app.abrirButton.BackgroundColor = [0 1 0];
+            app.abrirButton.FontName = 'Yu Gothic UI Semibold';
+            app.abrirButton.Position = [172 130 100 63];
+            app.abrirButton.Text = 'abrir';
+
+            % Create cerrarButton
+            app.cerrarButton = uibutton(app.UIFigure, 'push');
+            app.cerrarButton.ButtonPushedFcn = createCallbackFcn(app, @cerrarButtonPushed, true);
+            app.cerrarButton.BackgroundColor = [1 0 0];
+            app.cerrarButton.FontName = 'Yu Gothic UI Semibold';
+            app.cerrarButton.Position = [370 130 100 63];
+            app.cerrarButton.Text = 'cerrar';
+
+            % Create desconectarButton
+            app.desconectarButton = uibutton(app.UIFigure, 'push');
+            app.desconectarButton.ButtonPushedFcn = createCallbackFcn(app, @desconectarButtonPushed, true);
+            app.desconectarButton.BackgroundColor = [1 1 0];
+            app.desconectarButton.FontName = 'Yu Gothic UI Semibold';
+            app.desconectarButton.Position = [274 63 100 68];
+            app.desconectarButton.Text = 'desconectar ';
+
+            % Create conectarButton
+            app.conectarButton = uibutton(app.UIFigure, 'push');
+            app.conectarButton.ButtonPushedFcn = createCallbackFcn(app, @conectarButtonPushed, true);
+            app.conectarButton.BackgroundColor = [0 1 1];
+            app.conectarButton.FontName = 'Yu Gothic UI Semibold';
+            app.conectarButton.Position = [271 192 100 63];
+            app.conectarButton.Text = 'conectar';
+
+            % Create BASUREROAUTOMATICOLabel
+            app.BASUREROAUTOMATICOLabel = uilabel(app.UIFigure);
+            app.BASUREROAUTOMATICOLabel.FontName = 'Yu Gothic UI Semibold';
+            app.BASUREROAUTOMATICOLabel.FontSize = 24;
+            app.BASUREROAUTOMATICOLabel.Position = [178 288 290 32];
+            app.BASUREROAUTOMATICOLabel.Text = 'BASURERO AUTOMATICO';
+
+            % Show the figure after all components are created
+            app.UIFigure.Visible = 'on';
+        end
+    end
+
+> °John Esteban Jiménez M.°:
+% App creation and deletion
+    methods (Access = public)
+
+        % Construct app
+        function app = app1
+
+            % Create UIFigure and components
+            createComponents(app)
+
+            % Register the app with App Designer
+            registerApp(app, app.UIFigure)
+
+            % Execute the startup function
+            runStartupFcn(app, @startupFcn)
+
+            if nargout == 0
+                clear app
+            end
+        end
+
+        % Code that executes before app deletion
+        function delete(app)
+
+            % Delete UIFigure when app is deleted
+            delete(app.UIFigure)
+        end
+    end
+end
